@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceLog — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080810;
+            --glass: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.12);
+            --text-1: rgba(255,255,255,0.9);
+            --text-2: rgba(255,255,255,0.45);
+            --text-3: rgba(255,255,255,0.2);
+            --accent: rgba(120,220,200,0.9);
+            --accent-dim: rgba(120,220,200,0.12);
+            --bad: rgba(255,120,140,0.9);
+            --bad-dim: rgba(255,120,140,0.1);
+            --font: 'Inter', -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font);
+            color: var(--text-1);
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 40% 20%, rgba(80,140,200,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 80% at 60% 80%, rgba(120,80,200,0.04) 0%, transparent 60%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 360px;
+            padding: 48px 36px;
+            background: var(--glass);
+            backdrop-filter: blur(30px) saturate(1.2);
+            -webkit-backdrop-filter: blur(30px) saturate(1.2);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            text-align: center;
+        }
+        .login-card h1 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+        .login-card p {
+            font-size: 0.78rem;
+            color: var(--text-3);
+            font-weight: 300;
+            letter-spacing: 0.03em;
+            margin-bottom: 32px;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 13px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            color: var(--text-1);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 300;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            letter-spacing: 0.15em;
+            margin-bottom: 16px;
+        }
+        .login-card input:focus {
+            border-color: rgba(120,220,200,0.3);
+            box-shadow: 0 0 0 3px rgba(120,220,200,0.06);
+        }
+        .login-card input::placeholder {
+            color: var(--text-3);
+            letter-spacing: 0.05em;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 13px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(120,220,200,0.2);
+            border-radius: 28px;
+            color: var(--accent);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25,0.8,0.25,1);
+        }
+        .login-card button:hover {
+            background: rgba(120,220,200,0.18);
+            box-shadow: 0 0 20px rgba(120,220,200,0.06);
+        }
+        .error-msg {
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            background: var(--bad-dim);
+            border: 1px solid rgba(255,120,140,0.15);
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: var(--bad);
+        }
+        .back-link {
+            display: block;
+            margin-top: 24px;
+            font-size: 0.72rem;
+            color: var(--text-3);
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover { color: var(--text-2); }
+    </style>
+</head>
+<body>
+    <form class="login-card" method="POST" action="/admin/login">
+        <h1>FaceLog Admin</h1>
+        <p>Enter password to continue</p>
+        {% if error %}
+        <div class="error-msg">{{ error }}</div>
+        {% endif %}
+        <input type="password" name="password" placeholder="Password" autofocus autocomplete="current-password">
+        <button type="submit">Authenticate</button>
+        <a href="/view" class="back-link">← Back to public display</a>
+    </form>
+</body>
+</html>

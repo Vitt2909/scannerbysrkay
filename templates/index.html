@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FaceLog — Real-time facial recognition attendance system.">
+    <title>FaceLog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="main-header">
+        <div class="header-left">
+            <h1 class="logo">FaceLog</h1>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator" id="system-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Connecting</span>
+            </div>
+            <div class="face-count" id="face-count-badge">
+                <span class="count-number">0</span>
+                <span class="count-label">registered</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <button class="nav-tab active" data-tab="monitor" id="tab-monitor">Monitor</button>
+        <button class="nav-tab" data-tab="register" id="tab-register">Register</button>
+        <button class="nav-tab" data-tab="attendance" id="tab-attendance">Attendance</button>
+        <button class="nav-tab" data-tab="people" id="tab-people">People</button>
+    </nav>
+
+    <!-- Content -->
+    <main id="main-content">
+
+        <!-- Monitor -->
+        <section class="tab-panel active" id="panel-monitor">
+            <div class="monitor-layout">
+                <div class="webcam-container glass-panel">
+                    <div class="panel-header">
+                        <h2>Camera</h2>
+                        <div class="controls">
+                            <button class="btn btn-accent" id="btn-start-camera">Start</button>
+                            <button class="btn btn-ghost" id="btn-stop-camera" disabled>Stop</button>
+                        </div>
+                    </div>
+                    <div class="video-wrapper" id="video-wrapper">
+                        <video id="webcam-video" autoplay playsinline muted></video>
+                        <canvas id="overlay-canvas"></canvas>
+                        <div class="camera-placeholder" id="camera-placeholder">
+                            <div class="placeholder-orb"></div>
+                            <p>Start camera to begin</p>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="toggle-recognition" checked>
+                            <span class="toggle-slider"></span>
+                            Recognition
+                        </label>
+                        <span class="fps-display" id="fps-display"></span>
+                    </div>
+                </div>
+
+                <div class="results-sidebar">
+                    <div class="glass-panel detections-panel">
+                        <div class="panel-header">
+                            <h2>Detected</h2>
+                            <span class="badge" id="detection-count">0</span>
+                        </div>
+                        <div class="detections-list" id="detections-list">
+                            <div class="empty-state"><span>No faces in frame</span></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel activity-panel">
+                        <div class="panel-header">
+                            <h2>Activity</h2>
+                        </div>
+                        <div class="activity-feed" id="activity-feed">
+                            <div class="empty-state"><span>Waiting...</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Register -->
+        <section class="tab-panel" id="panel-register">
+            <div class="register-layout">
+                <div class="glass-panel register-camera">
+                    <div class="panel-header">
+                        <h2>Capture</h2>
+                    </div>
+                    <div class="video-wrapper" id="register-video-wrapper">
+                        <video id="register-video" autoplay playsinline muted></video>
+                        <canvas id="register-canvas" style="display:none;"></canvas>
+                        <div class="camera-placeholder" id="register-camera-placeholder">
+                            <div class="placeholder-orb"></div>
+                            <p>Camera activates on this tab</p>
+                        </div>
+                    </div>
+                    <div class="capture-controls">
+                        <button class="btn btn-accent btn-lg" id="btn-capture" disabled>
+                            Capture <span id="capture-count">0</span>/5
+                        </button>
+                        <p class="capture-hint">Vary your angle slightly between shots</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel register-form">
+                    <div class="panel-header">
+                        <h2>Details</h2>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-name">Name</label>
+                        <input type="text" id="register-name" placeholder="Full name"
+                               class="input-field" autocomplete="off">
+                    </div>
+
+                    <div class="captured-previews" id="captured-previews"></div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-accent btn-lg" id="btn-register" disabled>Register</button>
+                        <button class="btn btn-ghost" id="btn-clear-captures">Clear</button>
+                    </div>
+
+                    <div class="register-status" id="register-status"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attendance -->
+        <section class="tab-panel" id="panel-attendance">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2>Attendance</h2>
+                    <div class="controls">
+                        <input type="date" id="attendance-date" class="input-field input-sm">
+                        <button class="btn btn-ghost" id="btn-refresh-attendance">Refresh</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table" id="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Time</th>
+                                <th>Confidence</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-tbody">
+                            <tr class="empty-row">
+                                <td colspan="5">No records for today</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <span id="attendance-summary">0 entries</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- People -->
+        <section class="tab-panel" id="panel-people">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2>People</h2>
+                    <button class="btn btn-ghost" id="btn-refresh-people">Refresh</button>
+                </div>
+                <div class="people-grid" id="people-grid">
+                    <div class="empty-state">
+                        <p>No one registered yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

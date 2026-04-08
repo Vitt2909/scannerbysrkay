@@ -1,0 +1,229 @@
+/* ═══════════════════════════════════════════════════════════
+   FaceLog /view — macOS Sequoia Aesthetic 
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+    --bg: #0a0a0f;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, sans-serif;
+    --accent: #2997ff;
+    --text-1: #ffffff;
+    --text-2: rgba(255, 255, 255, 0.45);
+    --text-3: rgba(255, 255, 255, 0.3);
+    --border: rgba(255, 255, 255, 0.08);
+    --divider: rgba(255, 255, 255, 0.05);
+    --panel-bg: rgba(255, 255, 255, 0.05);
+}
+
+*, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--font);
+    color: var(--text-1);
+    cursor: none;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+.layout-mac {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ─── Camera Column (65%) ────────────────────────────────── */
+.col-camera {
+    width: 65vw;
+    position: relative;
+    background: transparent;
+    overflow: hidden;
+}
+
+#video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.camera-starting {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    z-index: 10;
+    transition: opacity 0.4s ease;
+}
+
+.camera-starting.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.camera-starting p {
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 400;
+}
+
+/* ─── Info Column (35%) ──────────────────────────────────── */
+.col-info {
+    width: 35vw;
+    height: 100%;
+    background: var(--panel-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 60px 40px;
+    gap: 80px; /* generous vertical spacing */
+}
+
+/* Last Recognized Block */
+.last-recognized-block {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    transition: opacity 0.4s ease;
+    opacity: 1;
+}
+
+.last-recognized-block.anim-fade {
+    animation: simpleFade 0.4s ease;
+}
+
+@keyframes simpleFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.block-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.block-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.block-name {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    line-height: 1.1;
+}
+
+.block-meta {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-2);
+    line-height: 1.4;
+}
+
+.block-confidence {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--accent);
+    text-align: right;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+/* Recent Entries List */
+.recent-entries-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.list-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-3);
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
+.recent-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 48px;
+    border-bottom: 1px solid var(--divider);
+    animation: simpleFade 0.3s ease;
+}
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
+.recent-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.recent-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-1);
+}
+
+.recent-time {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+}
+
+.empty-state {
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 400;
+}
+
+/* Clock */
+.clock {
+    position: absolute;
+    bottom: 24px;
+    right: 32px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    z-index: 100;
+}

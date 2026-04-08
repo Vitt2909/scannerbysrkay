@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceLog — Display</title>
+    <link rel="stylesheet" href="/static/css/view.css">
+</head>
+<body>
+    <div class="layout-mac">
+        <!-- Left: Camera -->
+        <div class="col-camera">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="canvas"></canvas>
+            <div class="camera-starting" id="camera-starting">
+                <p>Starting camera...</p>
+            </div>
+        </div>
+
+        <!-- Right: Info Panel -->
+        <div class="col-info">
+            <!-- Last Recognized Block -->
+            <div class="last-recognized-block" id="last-recognized-card">
+                <div class="empty-state">Waiting for recognition...</div>
+            </div>
+
+            <!-- Recent Entries List -->
+            <div class="recent-entries-wrapper">
+                <div class="list-label">RECENT</div>
+                <div class="recent-list" id="recent-list">
+                    <div class="empty-state">No recent entries</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="clock" id="clock"></div>
+    </div>
+
+    <script src="/static/js/view.js"></script>
+</body>
+</html>
