@@ -5,7 +5,7 @@ Two interfaces:
   /view   — Public display (read-only, auto-refreshing, no controls)
   /admin  — Protected panel (registration, attendance, people management)
 
-Auth: Session-based password. Set via FACELOG_ADMIN_PASSWORD env var or default.
+Auth: Session-based password. Requires a private FACELOG_ADMIN_PASSWORD environment variable.
 """
 
 import os
@@ -25,8 +25,10 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB max
 # Session secret key — generated per-run, or set via env for persistence across restarts
 app.secret_key = os.environ.get("FACELOG_SECRET_KEY", secrets.token_hex(32))
 
-# Admin password — set via environment variable, fallback to default
-ADMIN_PASSWORD = os.environ.get("FACELOG_ADMIN_PASSWORD", "admin123")
+# Require a private password; never accept a shared default.
+ADMIN_PASSWORD = os.environ.get("FACELOG_ADMIN_PASSWORD", "")
+if len(ADMIN_PASSWORD) < 12 or ADMIN_PASSWORD.strip() != ADMIN_PASSWORD:
+    raise RuntimeError("Set FACELOG_ADMIN_PASSWORD to a private password of at least 12 characters without surrounding whitespace.")
 
 # Attendance cooldown in minutes
 ATTENDANCE_COOLDOWN = 30
@@ -54,7 +56,7 @@ def initialize():
     faces = db.get_all_registered_faces()
     engine.load_known_faces(faces)
     print(f"[INIT] Loaded {engine.get_known_count()} face encodings.")
-    print(f"[AUTH] Admin password: {'(from env)' if os.environ.get('FACELOG_ADMIN_PASSWORD') else ADMIN_PASSWORD}")
+    print("[AUTH] Admin password configured; value is never logged.")
 
 
 # ─── Page Routes ─────────────────────────────────────────────────────────────
@@ -83,7 +85,7 @@ def admin_login():
     """Login gate for admin panel."""
     if request.method == "POST":
         password = request.form.get("password", "")
-        if password == ADMIN_PASSWORD:
+        if secrets.compare_digest(password.encode("utf-8"), ADMIN_PASSWORD.encode("utf-8")):
             session["admin_authenticated"] = True
             session.permanent = True
             return redirect(url_for("admin_panel"))
@@ -282,4 +284,4 @@ if __name__ == "__main__":
     print("  " + "-" * 56)
     print(f"  Open http://127.0.0.1:5000")
     print("=" * 60 + "\n")
-    app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)
+    app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)

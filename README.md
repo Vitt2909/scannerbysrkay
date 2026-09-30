@@ -56,6 +56,9 @@ python download_models.py
 # Activate the virtual environment
 .\venv\Scripts\Activate.ps1
 
+# Set a private password (at least 12 characters; do not reuse the old default).
+$env:FACELOG_ADMIN_PASSWORD = Read-Host "Private admin password"
+
 # Run the server
 python app.py
 ```
@@ -184,3 +187,7 @@ scannerbysrkay/
 ## License
 
 MIT — Use freely for personal and commercial projects.
+
+## Security
+
+The server requires `FACELOG_ADMIN_PASSWORD` (at least 12 characters) and refuses to start without it. Password values are never printed. Keep the server on its default loopback address; the public view is intended for a local display. Existing installations must set a new private password and restart after updating. Do not commit `.env`, attendance databases or face images.
