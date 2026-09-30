@@ -2,7 +2,7 @@
 app.py — Flask server for the Facial Recognition Attendance System.
 
 Two interfaces:
-  /view   — Public display (read-only, auto-refreshing, no controls)
+  /view   — Authenticated display (read-only, auto-refreshing, no controls)
   /admin  — Protected panel (registration, attendance, people management)
 
 Auth: Session-based password. Requires a private FACELOG_ADMIN_PASSWORD environment variable.
@@ -68,6 +68,7 @@ def index():
 
 
 @app.route("/view")
+@admin_required
 def public_view():
     """Public display — read-only, auto-refreshing, no controls."""
     return render_template("view.html")
@@ -101,14 +102,16 @@ def admin_logout():
 
 
 @app.route("/known_faces/<path:filename>")
+@admin_required
 def serve_known_faces(filename):
     """Serve registered face images."""
     return send_from_directory("known_faces", filename)
 
 
-# ─── Public API (no auth) ───────────────────────────────────────────────────
+# ─── Display API (auth required) ───────────────────────────────────────────────────
 
 @app.route("/api/recognize", methods=["POST"])
+@admin_required
 def api_recognize():
     """Accept a base64 frame, run face recognition, log attendance."""
     data = request.get_json(silent=True)
@@ -166,14 +169,16 @@ def api_recognize():
 
 
 @app.route("/api/attendance", methods=["GET"])
+@admin_required
 def api_attendance():
-    """Return attendance log — public read access."""
+    """Return attendance log to authenticated viewers."""
     date_str = request.args.get("date")
     entries = db.get_attendance_by_date(date_str) if date_str else db.get_today_attendance()
     return jsonify({"entries": entries, "count": len(entries)})
 
 
 @app.route("/api/last_recognized", methods=["GET"])
+@admin_required
 def api_last_recognized():
     """Return the most recently recognized person for the view display."""
     last = db.get_last_recognized()
@@ -198,8 +203,9 @@ def api_last_recognized():
 
 
 @app.route("/api/status", methods=["GET"])
+@admin_required
 def api_status():
-    """System status — public."""
+    """System status for authenticated viewers."""
     return jsonify({
         "status": "online",
         "known_faces": engine.get_known_count(),
@@ -279,7 +285,7 @@ if __name__ == "__main__":
     initialize()
     print("\n" + "=" * 60)
     print("  FACELOG -- Attendance System")
-    print("  /view   -> Public display     (no auth)")
+    print("  /view   -> Display            (login required)")
     print("  /admin  -> Admin panel        (password protected)")
     print("  " + "-" * 56)
     print(f"  Open http://127.0.0.1:5000")
